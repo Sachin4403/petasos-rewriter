@@ -45,7 +45,7 @@ func init() {
 	)
 
 	petasosEndpoint = rootCmd.PersistentFlags().String(
-		"petasos-endpoint", "",
+		"petasos-endpoint", "http://192.168.1.16:6400",
 		`Petasos endpoint, usually private.`,
 	)
 
@@ -54,7 +54,7 @@ func init() {
 		`Log output format [json, text, file]`,
 	)
 	logLevel = rootCmd.PersistentFlags().String(
-		"log-level", "info",
+		"log-level", "debug",
 		fmt.Sprintf("[%s,%s,%s]",
 			zerolog.InfoLevel.String(),
 			zerolog.DebugLevel.String(),
@@ -67,7 +67,7 @@ func init() {
 		`If set, all redirects will use this scheme [http, https]`,
 	)
 	talariaInternalName = rootCmd.PersistentFlags().String(
-		"talaria-internal", "xmidt-talaria",
+		"talaria-internal", "talaria-",
 		"Replacement candidate with talaria-external",
 	)
 	talariaDomain = rootCmd.PersistentFlags().String(
@@ -98,6 +98,7 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		logging()
+
 
 		var err error
 		petasosURL, err = url.Parse(*petasosEndpoint)
@@ -137,6 +138,7 @@ var rootCmd = &cobra.Command{
 		e := echo.New()
 		e.Use(middleware.Logger())
 		e.Use(middleware.Recover())
+		configureJaegar(e)
 		e.GET("/*", forwarder)
 		e.Logger.Fatal(e.Start(":" + *port))
 	},
