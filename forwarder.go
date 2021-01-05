@@ -2,49 +2,68 @@ package main
 
 import (
 	"fmt"
+	"github.com/labstack/echo-contrib/jaegertracing"
+	"github.com/labstack/echo/v4"
+	"github.com/opentracing/opentracing-go"
+	"github.com/rs/zerolog/log"
+	"github.com/uber/jaeger-client-go"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strings"
-
-	"github.com/labstack/echo/v4"
-
-	"github.com/rs/zerolog/log"
 )
 
 var (
 	ErrNoMatchFound = fmt.Errorf("No match found")
+	spanIdHeader = "X-B3-SpanId"
+	traceIdHeader = "X-B3-TraceId"
 )
 
 // forwarder forwads requests to real petasos instance and does
 // apropriate replacements.
 func forwarder(c echo.Context) error {
-
-	log.Debug().Msg("##############################")
-	log.Debug().Msg("###### Request Start #########")
-	log.Debug().Msg("##############################")
+	sp := jaegertracing.CreateChildSpan(c, "got request in forwarder.go")
+	defer  sp.Finish()
+	jaegarCtx := sp.Context().(jaeger.SpanContext)
+	traceId := jaegarCtx.TraceID().String()
+	spanId := jaegarCtx.SpanID().String()
+	debugLog := log.Debug().Str(spanIdHeader,spanId).Str(traceIdHeader,traceId)
+	infoLog := log.Info().Str(spanIdHeader,spanId).Str(traceIdHeader,traceId)
+	debugLog.Msg("##############################")
+	debugLog.Msg("###### Request Start #########")
+	debugLog.Msg("##############################")
 
 	// prepare request for forwarding
 	req := c.Request()
+	//deviceId := req.Header.Get("X-Webpa-Device-Name")
+
+
+	//sp.LogKV(
+	//	"device-id",deviceId,
+	//)
+	//sp.SetBaggageItem("device-name",deviceId)
+	//sp.SetTag("application","petasos-rewriter")
+
 
 	// store scheme of original request
 	originalRequestScheme := req.URL.Scheme
 	if originalRequestScheme == "" {
 		originalRequestScheme = req.Header.Get("X-Forwarded-Proto")
 	}
-	log.Debug().Msgf("originalScheme [%s]", originalRequestScheme)
+	debugLog.Msgf("Trace_id %s and spanId %s",traceId,spanId)
+	debugLog.Msgf("originalScheme [%s]", originalRequestScheme)
 
-	// Change protocols from ws(s) => http(s).
+	// Change protocols fro`m ws(s) => http(s).
 	// Parodus makes requests to `ws` but complains
 	// when getting a redirect containing `ws`.
 	switch originalRequestScheme {
 	case "ws":
-		log.Debug().Msgf("Replacing original scheme [%s] with [%s] in output", originalRequestScheme, "http")
+		debugLog.Msgf("Replacing original scheme [%s] with [%s] in output", originalRequestScheme, "http")
 		originalRequestScheme = "http"
 	case "wss":
-		log.Debug().Msgf("Replacing original scheme [%s] with [%s] in output", originalRequestScheme, "https")
+		debugLog.Msgf("Replacing original scheme [%s] with [%s] in output", originalRequestScheme, "https")
 		originalRequestScheme = "https"
 	}
 
@@ -52,10 +71,10 @@ func forwarder(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	log.Debug().Msg("Dumping original request to petasos-rewriter")
-	log.Debug().Msgf("%s", dump)
-	log.Debug().Msg("") // br
-	log.Debug().Msg("") // br
+	debugLog.Msg("Dumping original request to petasos-rewriter")
+	debugLog.Msgf("%s", dump)
+	debugLog.Msg("") // br
+	debugLog.Msg("") // br
 
 	// Prepare forwarding to petasos
 	req.URL = &url.URL{
@@ -71,15 +90,20 @@ func forwarder(c echo.Context) error {
 			return http.ErrUseLastResponse
 		},
 	}
+	opentracing.GlobalTracer().Inject(
+		sp.Context(),
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(req.Header))
 
 	dump, err = httputil.DumpRequest(req, true)
 	if err != nil {
 		return err
 	}
-	log.Debug().Msg("Dumping request to real petasos")
-	log.Debug().Msgf("%s", dump)
-	log.Debug().Msg("") // br
-	log.Debug().Msg("") // br
+	debugLog.Msg("Dumping request to real petasos")
+	debugLog.Msgf("%s", dump)
+	debugLog.Msg("") // br
+	debugLog.Msg("") // br
+
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -90,10 +114,10 @@ func forwarder(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	log.Debug().Msg("Dumping response from real petasos")
-	log.Debug().Msgf("%s", dump)
-	log.Debug().Msg("") // br
-	log.Debug().Msg("") // br
+	debugLog.Msg("Dumping response from real petasos")
+	debugLog.Msgf("%s", dump)
+	debugLog.Msg("") // br
+	debugLog.Msg("") // br
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -112,7 +136,7 @@ func forwarder(c echo.Context) error {
 		header = strings.TrimRight(header, ",")
 		c.Response().Header().Set(k, header)
 
-		log.Debug().Msgf("k: %s, v: %s\n", k, v)
+		debugLog.Msgf("k: %s, v: %s\n", k, v)
 	}
 
 
@@ -126,7 +150,7 @@ func forwarder(c echo.Context) error {
 	}
 	// Replace location header
 	location := c.Response().Header().Get("Location")
-	log.Debug().Msgf("Location [%s]\n", location)
+	debugLog.Msgf("Location [%s]\n", location)
 
 	locationUrl, err := url.Parse(location)
 	if err != nil {
@@ -153,13 +177,15 @@ func forwarder(c echo.Context) error {
 	publicTalariaURL := buildExternalURL(externalTalariaName, *talariaDomain)
 
 	locationUrl.Host = publicTalariaURL
-	log.Info().Msgf("redirecting from Location [%s] to Location [%s] for device name [%s] \n", location, locationUrl.String(),req.Header.Get("X-Webpa-Device-Name"))
+	infoLog.Msgf("redirecting from Location [%s] to Location [%s] for device name [%s] \n", location, locationUrl.String(),req.Header.Get("X-Webpa-Device-Name"))
 	c.Response().Header().Set("Location", locationUrl.String())
 
 	// Replace url in body
 	var href = regexp.MustCompile(`"(.*)"`)
 	body = href.ReplaceAll(body, []byte(`"`+locationUrl.String()+`"`))
 	c.Response().Header().Set("Content-Length", fmt.Sprintf("%d", len(body)))
+	c.Response().Header().Set(spanIdHeader, spanId)
+	c.Response().Header().Set(traceIdHeader, traceId)
 
 	// Forward status code
 	c.Response().Writer.WriteHeader(resp.StatusCode)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"io"
 	"os"
 	"path"
@@ -9,6 +10,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/labstack/echo-contrib/jaegertracing"
 )
 
 func logging() {
@@ -26,6 +29,9 @@ func logging() {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Caller().Logger()
 	}else if  *logFormat == "file" {
 		log.Logger = log.Output(fileAppender(*logDir,*logFilename)).With().Caller().Logger()
+	}else{
+		log.Logger = zerolog.New(os.Stderr).With().Timestamp().Caller().Stack().Logger()
+
 	}
 
 }
@@ -51,5 +57,11 @@ func fileAppender(dir,filename string) io.Writer {
 	return &lumberjack.Logger{
 		Filename:   path.Join(dir, filename),
 	}
+
+}
+
+func configureJaegar(e *echo.Echo) {
+	closer := jaegertracing.New(e, nil)
+	defer closer.Close()
 
 }
