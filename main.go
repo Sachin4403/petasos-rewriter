@@ -106,10 +106,6 @@ var rootCmd = &cobra.Command{
 
 		}
 		e.GET("/*", forwarder)
-		sentry.WithScope(func(scope *sentry.Scope) {
-			scope.SetLevel(sentry.LevelFatal)
-			sentry.CaptureException(e.Start(":" + viper.GetString(serverPort)))
-		})
 		e.Logger.Fatal(e.Start(":" + viper.GetString(serverPort)))
 	},
 }
