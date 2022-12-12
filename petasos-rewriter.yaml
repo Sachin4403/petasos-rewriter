@@ -59,7 +59,7 @@ traceProvider:
 
 # Remote update information. Currently, this is specific to updating resource's IP address
 # For running tests on local, set enable as true and url as empty 
-remoteUpdate:
+# remoteUpdate:
   # If enable is true, only then update resource's IP address 
   # enable: true
   # Endpoint to update resource's IP address
