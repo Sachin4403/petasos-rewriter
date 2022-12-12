@@ -214,11 +214,11 @@ func buildExternalURL(newTalariaName, domain string) string {
 
 func updateResourceIpAddress(req *http.Request, client *http.Client) error {
 	requestBody := UpdateResourceRequest{
-		Cnmac:       req.Header.Get("x-device-cn"),
-		Environment: req.Header.Get("environment"),
+		Cnmac:       req.Header.Get("X-DEVICE-CN"),
+		Environment: req.Header.Get("ENVIRONMENT"),
 		Mac:         req.Header.Get("X-Webpa-Device-Name"),
-		RemoteIp:    req.Header.Get("remoteIp"),
-		TenantId:    req.Header.Get("x-tenant-id"),
+		RemoteIp:    req.Header.Get("X-REAL-IP"),
+		TenantId:    req.Header.Get("X-TENANT-ID"),
 	}
 
 	jsonBytes, err := json.Marshal(requestBody)

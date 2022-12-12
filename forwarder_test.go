@@ -131,10 +131,10 @@ func TestForwarder(t *testing.T) {
 			r := httptest.NewRequest("", "/v2/api/device", nil)
 			r.Header.Set("X-Webpa-Device-Name", record.deviceName)
 			r.Header.Set("X-Forwarded-Proto", "ws")
-			r.Header.Set("x-device-cn", record.deviceName)
-			r.Header.Set("remoteIp", "11.111.111.11")
-			r.Header.Set("x-tenant-id", "dtdl")
-			r.Header.Set("environment", "dev")
+			r.Header.Set("X-DEVICE-CN", record.deviceName)
+			r.Header.Set("X-REAL-IP", "11.111.111.11")
+			r.Header.Set("X-TENANT-ID", "dtdl")
+			r.Header.Set("ENVIRONMENT", "dev")
 			client := &http.Client{
 				CheckRedirect: func(req *http.Request, via []*http.Request) error {
 					return http.ErrUseLastResponse
