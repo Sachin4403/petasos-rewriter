@@ -34,6 +34,7 @@ func forwarder(c echo.Context, client *http.Client) error {
 
 	isRemoteUpdateEnabled := viper.GetBool("remoteUpdate.enable")
 	if isRemoteUpdateEnabled {
+		log.Ctx(ctx).Info().Msg("updating resource's IP address")
 		err := updateResourceIpAddress(req, client)
 		if err != nil {
 			sentry.CaptureException(err)
