@@ -236,6 +236,7 @@ func updateResourceIpAddress(req *http.Request, client *http.Client) error {
 	if err != nil {
 		return err
 	}
+	request.Header.Add("Content-Type", "application/json")
 
 	resp, err := client.Do(request)
 	if err != nil {
