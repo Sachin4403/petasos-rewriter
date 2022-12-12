@@ -1,15 +1,18 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/getsentry/sentry-go"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/spf13/viper"
 
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -28,6 +31,15 @@ func forwarder(c echo.Context, client *http.Client) error {
 
 	req := c.Request()
 	ctx := req.Context()
+
+	isRemoteUpdateEnabled := viper.GetBool("remoteUpdate.enable")
+	if isRemoteUpdateEnabled {
+		err := updateResourceIpAddress(req, client)
+		if err != nil {
+			sentry.CaptureException(err)
+			panic(err)
+		}
+	}
 
 	// store scheme of original request
 	originalRequestScheme := req.URL.Scheme
@@ -197,4 +209,42 @@ func buildExternalURL(newTalariaName, domain string) string {
 	builder.WriteString(".")
 	builder.WriteString(domain)
 	return builder.String()
+}
+
+func updateResourceIpAddress(req *http.Request, client *http.Client) error {
+	requestBody := UpdateResourceRequest{
+		Cnmac:       req.Header.Get("x-device-cn"),
+		Environment: req.Header.Get("environment"),
+		Mac:         req.Header.Get("X-Webpa-Device-Name"),
+		RemoteIp:    req.Header.Get("remoteIp"),
+		TenantId:    req.Header.Get("x-tenant-id"),
+	}
+
+	jsonBytes, err := json.Marshal(requestBody)
+	if err != nil {
+		return err
+	}
+
+	url := viper.GetString("remoteUpdate.url")
+	//Added this for testing purpose as we need Scheme and Host of the httptest server to mock http client requests.
+	if url == "" {
+		url = petasosURL.Scheme + "://" + petasosURL.Host + "/hgw/rdk-xmidt-executor/v1/listener/xmidt/device"
+	}
+
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsonBytes))
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("status code received while updating resource's ip address via petasos rewriter %d", resp.StatusCode)
+	}
+
+	return nil
 }

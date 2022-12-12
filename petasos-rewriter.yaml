@@ -56,3 +56,11 @@ traceProvider:
   endpoint:
   # If true will  skip  exporting of the trace information to stdout
   skipTraceExport: false
+
+# Remote update information. Currently, this is specific to updating resource's IP address
+# For running tests on local, set enable as true and url as empty 
+remoteUpdate:
+  # If enable is true, only then update resource's IP address 
+  # enable: true
+  # Endpoint to update resource's IP address
+  # url: https://api-gateway-shared.dev.hgw.yo-digital.com/hgw/rdk-xmidt-executor/v1/listener/xmidt/device
