@@ -211,7 +211,7 @@ func buildExternalURL(newTalariaName, domain string) string {
 
 func updateResourceIpAddress(req *http.Request, client *http.Client, resourceURL *url.URL) error {
 	requestBody := UpdateResourceRequest{
-		ipAddress: req.Header.Get("X-REAL-IP"),
+		IpAddress: req.Header.Get("X-REAL-IP"),
 	}
 	cpeIdentifier := req.Header.Get("X-DEVICE-CN")
 

@@ -1,5 +1,5 @@
 package main
 
 type UpdateResourceRequest struct {
-	ipAddress string `json:"ipAddress"`
+	IpAddress string `json:"ipAddress"`
 }
