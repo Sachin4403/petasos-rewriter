@@ -6,11 +6,13 @@ require (
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/benchkram/errz v0.0.0-20180520163740-571a80a661f2
 	github.com/getsentry/sentry-go v0.9.0
-	github.com/labstack/echo/v4 v4.2.2
-	github.com/rs/zerolog v1.19.0
+	github.com/labstack/echo-contrib v0.15.0
+	github.com/labstack/echo/v4 v4.10.2
+	github.com/prometheus/client_golang v1.14.0
+	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.4.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.19.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.19.0
 	go.opentelemetry.io/otel v0.19.0

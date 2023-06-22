@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"net/url"
+	"os"
+	"time"
+
 	"github.com/avast/retry-go"
 	"github.com/benchkram/errz"
 	"github.com/getsentry/sentry-go"
@@ -13,9 +17,6 @@ import (
 	"github.com/spf13/viper"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"go.opentelemetry.io/otel/propagation"
-	"net/url"
-	"os"
-	"time"
 )
 
 const (
@@ -135,6 +136,8 @@ var rootCmd = &cobra.Command{
 			}))
 
 		}
+		// Setup prometheus
+		provideMetrics(e)
 		requestHandlerFunc := func(ctx echo.Context) error {
 			return forwarder(ctx, client)
 		}
