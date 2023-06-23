@@ -44,7 +44,7 @@ func getMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			startTime := time.Now()
-			c.Response().Header().Set("Content-Encoding", "identity")
+			c.Request().Header.Set("Accept-Encoding", "identity")
 			err := next(c)
 			elapsed := time.Since(startTime).Seconds()
 			status := strconv.Itoa(c.Response().Status)
