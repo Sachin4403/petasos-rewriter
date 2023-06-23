@@ -142,7 +142,7 @@ var rootCmd = &cobra.Command{
 			return forwarder(ctx, client)
 		}
 
-		e.GET("/*", requestHandlerFunc)
+		e.GET("/api/v2/device", requestHandlerFunc)
 		e.Logger.Fatal(e.Start(":" + viper.GetString(serverPort)))
 	},
 }
