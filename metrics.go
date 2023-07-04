@@ -7,40 +7,68 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/spf13/viper"
 )
 
 var labelNames = []string{"code", "method", "host", "url"}
 
-var totalRequests = prometheus.NewCounterVec(
-	prometheus.CounterOpts{
-		Name: "server_request_count",
-		Help: "total incoming HTTP requests",
-	},
-	labelNames,
-)
-
-var requestDuration = prometheus.NewHistogramVec(
-	prometheus.HistogramOpts{
-		Name:    "server_request_duration_seconds",
-		Help:    "tracks incoming request durations in seconds",
-		Buckets: []float64{0.1, 0.5, 1, 1.5, 2, 2.5, 3},
-	},
-	labelNames,
-)
+type metricRegistry struct {
+	TotalRequests         *prometheus.CounterVec
+	ServerRequestDuration *prometheus.HistogramVec
+}
 
 func provideMetrics(e *echo.Echo) {
-	if err := prometheus.Register(totalRequests); err != nil {
+	mr := registerMetrics()
+
+	if err := prometheus.Register(mr.TotalRequests); err != nil {
 		e.Logger.Fatal(err)
 	}
-	if err := prometheus.Register(requestDuration); err != nil {
+	if err := prometheus.Register(mr.ServerRequestDuration); err != nil {
 		e.Logger.Fatal(err)
 	}
 
-	e.Use(getMiddleware())
+	e.Use(mr.getMiddleware())
 	e.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 }
 
-func getMiddleware() echo.MiddlewareFunc {
+func registerMetrics() *metricRegistry {
+	namespace := viper.GetString("metricsOptions.namespace")
+	if len(namespace) == 0 {
+		namespace = "xmidt"
+	}
+	subsystem := viper.GetString("metricsOptions.subsystem")
+	if len(subsystem) == 0 {
+		subsystem = "petasos_rewriter"
+	}
+
+	totalRequests := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Subsystem: subsystem,
+			Name:      "server_request_count",
+			Help:      "total incoming HTTP requests",
+		},
+		labelNames,
+	)
+
+	serverRequestDuration := prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Namespace: namespace,
+			Subsystem: subsystem,
+			Name:      "server_request_duration_seconds",
+			Help:      "tracks incoming request durations in seconds",
+			Buckets:   []float64{0.1, 0.5, 1, 1.5, 2, 2.5, 3},
+		},
+		labelNames,
+	)
+
+	return &metricRegistry{
+		TotalRequests:         totalRequests,
+		ServerRequestDuration: serverRequestDuration,
+	}
+}
+
+func (mr *metricRegistry) getMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			startTime := time.Now()
@@ -55,8 +83,8 @@ func getMiddleware() echo.MiddlewareFunc {
 			values[2] = c.Request().Host
 			values[3] = c.Path()
 
-			totalRequests.WithLabelValues(values...).Inc()
-			requestDuration.WithLabelValues(values...).Observe(elapsed)
+			mr.TotalRequests.WithLabelValues(values...).Inc()
+			mr.ServerRequestDuration.WithLabelValues(values...).Observe(elapsed)
 			return err
 		}
 	}
