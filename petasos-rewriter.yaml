@@ -9,7 +9,7 @@ server:
 
 #Petasos endpoint, usually private
 petasos:
-  endpoint: http://192.168.100.128:6400
+  endpoint: https://api-gateway-shared.test.rdk.yo-digital.com/
 
 talaria:
   # Replacement candidate with talaria.external
@@ -78,6 +78,8 @@ remoteUpdate:
 #
 # (Optional)
 metricsOptions:
+  # port on which metrics will be running
+  port: 1324
   # namespace is the namespace of the metrics provided
   # (Optional)
   namespace: xmidt
