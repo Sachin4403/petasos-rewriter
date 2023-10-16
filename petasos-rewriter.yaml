@@ -86,3 +86,8 @@ metricsOptions:
   # subsystem is the subsystem of the metrics provided
   # (Optional)
   subsystem: petasos_rewriter
+
+# If enabled, requests redirected to Talaria will be examined for the presence of an Authorization header, 
+# and if the Authorization header is not present, the request will be rejected.
+authHeaderCheck:
+  enable: false
