@@ -114,7 +114,7 @@ func registerMetrics() *metricRegistry {
 func (mr *metricRegistry) getMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			isCpeRedirectRequest := strings.Contains(c.Request().RequestURI, "api")
+			isCpeRedirectRequest := strings.Contains(c.Request().RequestURI, authHeaderCheckRequestPath)
 			isAuthHeaderPresent := len(c.Request().Header.Get("Authorization")) > 0
 			c.Request().Header.Set("Accept-Encoding", "identity")
 
