@@ -209,9 +209,9 @@ func replaceTalariaInternalName(host, old, new string) (string, error) {
 // buildExternalURL by concatenation new talaria name + given domain
 func buildExternalURL(newTalariaName, domain string) string {
 	var builder strings.Builder
-	builder.WriteString(newTalariaName)
-	builder.WriteString(".")
 	builder.WriteString(domain)
+	builder.WriteString("/")
+	builder.WriteString(newTalariaName)
 	return builder.String()
 }
 

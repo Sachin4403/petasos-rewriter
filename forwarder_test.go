@@ -61,11 +61,12 @@ func TestBuildExternalURL(t *testing.T) {
 		arg2     string
 		expected string
 	}{
-		{"", "", "."},
-		{"talaria", "Test.com", "talaria.Test.com"},
-		{"talaria2", "dev.rdk.yo-digital.com", "talaria2.dev.rdk.yo-digital.com"},
-		{"talaria3", "xyz.com", "talaria3.xyz.com"},
+		{"", "", "/"},
+		{"talaria", "Test.com", "Test.com/talaria"},
+		{"talaria2", "dev.rdk.yo-digital.com", "dev.rdk.yo-digital.com/talaria2"},
+		{"talaria3", "xyz.com", "xyz.com/talaria3"},
 	}
+	// arg2/arg1
 	for i, record := range testData {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			var (
@@ -126,7 +127,7 @@ func TestForwarder(t *testing.T) {
 			}
 			w := httptest.NewRecorder()
 			c := e.NewContext(r, w)
-			err := forwarder(c,client)
+			err := forwarder(c, client)
 			assert.Nil(err)
 
 		})
