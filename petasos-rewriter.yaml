@@ -24,7 +24,7 @@ talaria:
   internal: talaria
   #Replacement for talaria-internal-name
   external: talaria
-  #Talaria public domain to forward the request to. Example result: [replace(talaria-internal,talaria-external).talaria-domain]
+  #Talaria public domain to forward the request to. Example result: [talaria-domain/replace(talaria-internal,talaria-external)]
   domain: dev.rdk.yo-digital.com
 
 #Sentry
