@@ -175,7 +175,6 @@ func forwarder(c echo.Context, client *http.Client) error {
 	locationUrl.Host = viper.GetString(talariaDomain)
 	var builder strings.Builder
 	builder.WriteString(externalTalariaName)
-	builder.WriteString("/")
 	builder.WriteString(locationUrl.Path)
 	var path = builder.String()
 	locationUrl.Path = path
