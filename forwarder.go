@@ -171,7 +171,6 @@ func forwarder(c echo.Context, client *http.Client) error {
 		sentry.CaptureException(err)
 		return err
 	}
-	// publicTalariaURL := buildExternalURL(externalTalariaName, viper.GetString(talariaDomain))
 
 	locationUrl.Host = viper.GetString(talariaDomain)
 	var builder strings.Builder
@@ -180,7 +179,6 @@ func forwarder(c echo.Context, client *http.Client) error {
 	builder.WriteString(locationUrl.Path)
 	var path = builder.String()
 	locationUrl.Path = path
-	locationUrl.Host = publicTalariaURL
 	log.Ctx(ctx).Info().Msgf("redirecting from Location [%s] to Location [%s] for device name [%s] \n", location, locationUrl.String(), req.Header.Get("X-Webpa-Device-Name"))
 	c.Response().Header().Set("Location", locationUrl.String())
 
