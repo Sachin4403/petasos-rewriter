@@ -23,6 +23,11 @@ const (
 	expiryDateHeader          = "X-Cert-Expiry-Date"
 	realIpHeader              = "X-REAL-IP"
 	deviceCNHeader            = "X-DEVICE-CN"
+	lastRebootReason          = "hw-last-reboot-reason"
+	webpaInterfaceUsed        = "webpa-interface-used"
+	webpaLastReconnectReason  = "webpa-last-reconnect-reason"
+	bootTime                  = "boot-time"
+	webpaProtocol             = "webpa-protocol"
 )
 
 var (
@@ -235,19 +240,28 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 	}
 
 	requestBody := UpdateResourceRequest{
-		IpAddress:               req.Header.Get(realIpHeader),
-		CertificateProviderType: certificateProviderType,
-		CertificateExpiryDate:   req.Header.Get(expiryDateHeader),
+		IpAddress:                req.Header.Get(realIpHeader),
+		CertificateProviderType:  certificateProviderType,
+		CertificateExpiryDate:    req.Header.Get(expiryDateHeader),
+		HwLastRebootReason:       req.Header.Get(lastRebootReason),
+		WebpaInterfaceUsed:       req.Header.Get(webpaInterfaceUsed),
+		WebpaLastReconnectReason: req.Header.Get(webpaLastReconnectReason),
+		BootTime:                 req.Header.Get(bootTime),
+		WebpaProtocol:            req.Header.Get(webpaProtocol),
 	}
 
-	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type : [%s], Certificate expiry type : [%s]", requestBody.CertificateProviderType, requestBody.CertificateExpiryDate)
+	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type : [%s], Certificate expiry date : [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Boot Time: [%s], Webpa Protocol: [%s]",
+		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
+		requestBody.HwLastRebootReason, requestBody.WebpaInterfaceUsed,
+		requestBody.WebpaLastReconnectReason, requestBody.BootTime,
+		requestBody.WebpaProtocol)
+
 	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))
 	jsonBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		return err
 	}
 
-	//resourceURL = abc.com/v1/resource/macAddress
 	finalUrl := resourceURL.String() + "/" + cpeIdentifier
 
 	request, err := http.NewRequest(http.MethodPut, finalUrl, bytes.NewReader(jsonBytes))
@@ -257,14 +271,15 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 	request.Header.Add("Content-Type", "application/json")
 	request.Header.Set("ENVIRONMENT", req.Header.Get("ENVIRONMENT"))
 	request.Header.Set("X-TENANT-ID", req.Header.Get("X-TENANT-ID"))
+
 	resp, err := client.Do(request)
 	if err != nil {
 		return err
 	}
-
 	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("status code received while updating resource's ip address via petasos rewriter %d", resp.StatusCode)
+		return fmt.Errorf("status code received while updating resource's ip address via petasos rewriter: %d", resp.StatusCode)
 	}
 
 	return nil
