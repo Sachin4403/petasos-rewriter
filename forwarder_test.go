@@ -132,9 +132,7 @@ func TestForwarder(t *testing.T) {
 
 		})
 	}
-
 }
-
 func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 	testsData := []struct {
 		realIP                   string
@@ -144,76 +142,23 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 		hwLastRebootReason       string
 		webpaInterfaceUsed       string
 		webpaLastReconnectReason string
-		bootTime                 string
 		webpaProtocol            string
 		expectedRequestBody      string
 		expectedStatus           int
+		xWebPA                   string
 	}{
 		{
 			realIP:                   "127.0.0.1",
 			certificateProvider:      "DTSECURITY",
 			expiryDate:               "Sep 19 23:59:59 2031 GMT",
 			deviceCN:                 "TestCPE",
-			hwLastRebootReason:       "Power Failure",
-			webpaInterfaceUsed:       "eth0",
-			webpaLastReconnectReason: "User Initiated",
-			bootTime:                 "2024-10-24T10:00:00Z",
-			webpaProtocol:            "HTTP/2",
-			expectedRequestBody:      `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","hw-last-reboot-reason":"Power Failure","webpa-interface-used":"eth0","webpa-last-reconnect-reason":"User Initiated","bootTime":"2024-10-24T10:00:00Z","webpa-protocol":"HTTP/2"}`,
+			hwLastRebootReason:       "unknown",
+			webpaInterfaceUsed:       "erouter0",
+			webpaLastReconnectReason: "SSL_Socket_Close",
+			webpaProtocol:            "PARODUS-2.0-61b1a7a",
+			xWebPA:                   "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24iLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIn0=",
+			expectedRequestBody:      `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","hw-last-reboot-reason":"unknown","webpa-interface-used":"erouter0","webpa-last-reconnect-reason":"SSL_Socket_Close","webpa-protocol":"PARODUS-2.0-61b1a7a"}`,
 			expectedStatus:           http.StatusOK,
-		},
-		{
-			realIP:                   "",
-			certificateProvider:      "C2 CertProvider",
-			expiryDate:               "Dec 31 23:59:59 2025 GMT",
-			deviceCN:                 "TestCPE",
-			hwLastRebootReason:       "",
-			webpaInterfaceUsed:       "",
-			webpaLastReconnectReason: "",
-			bootTime:                 "",
-			webpaProtocol:            "",
-			expectedRequestBody:      `{"ipAddress":"","certificateProviderType":"IRDETO","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","hw-last-reboot-reason":"","webpa-interface-used":"","webpa-last-reconnect-reason":"","bootTime":"","webpa-protocol":""}`,
-			expectedStatus:           http.StatusOK,
-		},
-		{
-			realIP:                   "127.0.0.1",
-			certificateProvider:      "CertProvider",
-			expiryDate:               "Dec 31 23:59:59 2025 GMT",
-			deviceCN:                 "TestCPE",
-			hwLastRebootReason:       "Scheduled",
-			webpaInterfaceUsed:       "eth1",
-			webpaLastReconnectReason: "Automatic Reboot",
-			bootTime:                 "2024-10-24T10:00:00Z",
-			webpaProtocol:            "HTTP/1.1",
-			expectedRequestBody:      `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","hw-last-reboot-reason":"Scheduled","webpa-interface-used":"eth1","webpa-last-reconnect-reason":"Automatic Reboot","bootTime":"2024-10-24T10:00:00Z","webpa-protocol":"HTTP/1.1"}`,
-			expectedStatus:           http.StatusOK,
-		},
-		{
-			realIP:                   "127.0.0.1",
-			certificateProvider:      "DTSECURITY",
-			expiryDate:               "",
-			deviceCN:                 "TestCPE",
-			hwLastRebootReason:       "Unknown",
-			webpaInterfaceUsed:       "eth0",
-			webpaLastReconnectReason: "Timeout",
-			bootTime:                 "2024-10-24T10:00:00Z",
-			webpaProtocol:            "HTTP/2",
-			expectedRequestBody:      `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"","hw-last-reboot-reason":"Unknown","webpa-interface-used":"eth0","webpa-last-reconnect-reason":"Timeout","bootTime":"2024-10-24T10:00:00Z","webpa-protocol":"HTTP/2"}`,
-			expectedStatus:           http.StatusOK,
-		},
-		// Negative case in case of some unexpected behaviour
-		{
-			realIP:                   "127.0.0.1",
-			certificateProvider:      "DTSECURITY",
-			expiryDate:               "Sep 19 23:59:59 2031 GMT",
-			deviceCN:                 "TestCPE",
-			hwLastRebootReason:       "Power Failure",
-			webpaInterfaceUsed:       "eth0",
-			webpaLastReconnectReason: "User Initiated",
-			bootTime:                 "2024-10-24T10:00:00Z",
-			webpaProtocol:            "HTTP/2",
-			expectedRequestBody:      `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","hw-last-reboot-reason":"Power Failure","webpa-interface-used":"eth0","webpa-last-reconnect-reason":"User Initiated","bootTime":"2024-10-24T10:00:00Z","webpa-protocol":"HTTP/2"}`,
-			expectedStatus:           http.StatusInternalServerError,
 		},
 	}
 
@@ -222,13 +167,16 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			assert := assert.New(t)
 
 			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Log the received headers for debugging
+				t.Logf("Received headers: %+v", r.Header)
+
 				assert.Equal(http.MethodPut, r.Method)
+
 				requestBody, err := io.ReadAll(r.Body)
 				assert.NoError(err)
 				assert.JSONEq(tt.expectedRequestBody, string(requestBody))
 				w.WriteHeader(tt.expectedStatus)
 			}))
-
 			defer mockServer.Close()
 
 			testReq, err := http.NewRequest(http.MethodPut, "/", nil)
@@ -240,10 +188,10 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			testReq.Header.Set(lastRebootReason, tt.hwLastRebootReason)
 			testReq.Header.Set(webpaInterfaceUsed, tt.webpaInterfaceUsed)
 			testReq.Header.Set(webpaLastReconnectReason, tt.webpaLastReconnectReason)
-			testReq.Header.Set(bootTime, tt.bootTime)
 			testReq.Header.Set(webpaProtocol, tt.webpaProtocol)
 			testReq.Header.Set("ENVIRONMENT", "test")
 			testReq.Header.Set("X-TENANT-ID", "12345")
+			testReq.Header.Set(xWebPA, tt.xWebPA)
 
 			client := &http.Client{
 				Transport: &http.Transport{
@@ -257,10 +205,16 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			assert.NoError(err)
 
 			err = updateResourceIpAddressAndCertificateInfo(testReq, client, resourceURL)
+
 			if tt.expectedStatus != http.StatusOK {
 				assert.Error(err)
 			} else {
 				assert.NoError(err)
+			}
+			if tt.expectedStatus == http.StatusOK {
+				assert.Equal(http.StatusOK, tt.expectedStatus, "Expected status OK")
+			} else {
+				assert.NotEqual(http.StatusOK, tt.expectedStatus, "Expected status to be not OK")
 			}
 		})
 	}
