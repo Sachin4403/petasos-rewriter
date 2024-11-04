@@ -24,11 +24,7 @@ const (
 	expiryDateHeader          = "X-Cert-Expiry-Date"
 	realIpHeader              = "X-REAL-IP"
 	deviceCNHeader            = "X-DEVICE-CN"
-	lastRebootReason          = "hw-last-reboot-reason"
-	webpaInterfaceUsed        = "webpa-interface-used"
-	webpaLastReconnectReason  = "webpa-last-reconnect-reason"
-	webpaProtocol             = "webpa-protocol"
-	xWebPA                    = "X-WebPA-Convey"
+	webpaConveyHeader         = "X-WebPA-Convey"
 )
 
 var (
@@ -232,59 +228,69 @@ func buildExternalURL(newTalariaName, domain string) string {
  * Extracts IP address, certificate provider, and expiry details from HTTP request headers.
  * Calls the RI API with this information.
  */
-// Function to extract and decode X-WebPA-Convey header
-func extractAndDecodeXWebPA(req *http.Request) (UpdateResourceRequest, error) {
-	var requestBody UpdateResourceRequest
 
-	xWebPACode := req.Header.Get(xWebPA)
-	if xWebPACode == "" {
-		return requestBody, fmt.Errorf("X-WebPA-Convey header not found")
-	}
-
-	decodedData, err := base64.StdEncoding.DecodeString(xWebPACode)
+// base64Decode decodes a base64 encoded string.
+func base64Decode(encodedStr string) ([]byte, error) {
+	decodedData, err := base64.StdEncoding.DecodeString(encodedStr)
 	if err != nil {
-		return requestBody, fmt.Errorf("failed to decode X-WebPA-Convey header: %v", err)
+		return nil, fmt.Errorf("failed to decode base64 string: %v", err)
 	}
-
-	// Assuming the decoded data is in JSON format
-	if err := json.Unmarshal(decodedData, &requestBody); err != nil {
-		return requestBody, fmt.Errorf("failed to unmarshal decoded X-WebPA-Convey data: %v", err)
-	}
-
-	return requestBody, nil
+	return decodedData, nil
 }
 
+// extractWebPAConveyHeader extracts the X-WebPA-Convey header value.
+func extractWebPAConveyHeader(req *http.Request) (string, error) {
+	xWebPACode := req.Header.Get("X-WebPA-Convey")
+	if xWebPACode == "" {
+		return "", fmt.Errorf("X-WebPA-Convey header not found")
+	}
+	return xWebPACode, nil
+}
+
+// updateResourceIpAddressAndCertificateInfo updates resource information.
 func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.Client, resourceURL *url.URL) error {
-	certificateProviderRaw := req.Header.Get(certificateProviderHeader)
+	certificateProviderRaw := req.Header.Get("X-Certificate-Provider")
 	certificateProviderType := "DTSECURITY"
 	if strings.Contains(certificateProviderRaw, "C2") {
 		certificateProviderType = "IRDETO"
 	}
 
-	// Extract additional information from X-WebPA-Convey
-	xWebPAData, err := extractAndDecodeXWebPA(req)
+	// Extract X-WebPA-Convey header
+	xWebPACode, err := extractWebPAConveyHeader(req)
 	if err != nil {
 		return err
 	}
 
-	// Prepare the request body
-	requestBody := UpdateResourceRequest{
-		IpAddress:                req.Header.Get(realIpHeader),
-		CertificateProviderType:  certificateProviderType,
-		CertificateExpiryDate:    req.Header.Get(expiryDateHeader),
-		HwLastRebootReason:       xWebPAData.HwLastRebootReason,
-		WebpaInterfaceUsed:       xWebPAData.WebpaInterfaceUsed,
-		WebpaLastReconnectReason: xWebPAData.WebpaLastReconnectReason,
-		WebpaProtocol:            xWebPAData.WebpaProtocol,
+	// Decode and unmarshal the extracted X-WebPA-Convey header
+	decodedData, err := base64Decode(xWebPACode)
+	if err != nil {
+		return err
 	}
 
-	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type : [%s], Certificate expiry date : [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s]",
+	var webPAData WebPAHeaderData
+	if err := json.Unmarshal(decodedData, &webPAData); err != nil {
+		return fmt.Errorf("failed to unmarshal decoded X-WebPA-Convey data: %v", err)
+	}
+
+	// Prepare the request body
+	requestBody := UpdateResourceRequest{
+		IpAddress:                req.Header.Get("X-Real-IP"),
+		CertificateProviderType:  certificateProviderType,
+		CertificateExpiryDate:    req.Header.Get("X-Certificate-Expiry"),
+		HwLastRebootReason:       webPAData.HwLastRebootReason,
+		WebpaInterfaceUsed:       webPAData.WebpaInterfaceUsed,
+		WebpaLastReconnectReason: webPAData.WebpaLastReconnectReason,
+		WebpaProtocol:            webPAData.WebpaProtocol,
+	}
+
+	// Log the details
+	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s]",
 		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
 		requestBody.HwLastRebootReason, requestBody.WebpaInterfaceUsed,
 		requestBody.WebpaLastReconnectReason,
 		requestBody.WebpaProtocol)
 
-	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))
+	cpeIdentifier := strings.ToLower(req.Header.Get("X-Device-CN"))
 	jsonBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		return err
@@ -307,7 +313,7 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("status code received while updating resource's ip address via petasos rewriter: %d", resp.StatusCode)
+		return fmt.Errorf("status code received while updating resource's IP address via Petasos rewriter: %d", resp.StatusCode)
 	}
 
 	return nil
