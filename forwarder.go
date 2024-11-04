@@ -227,6 +227,20 @@ func buildExternalURL(newTalariaName, domain string) string {
  * Extracts IP address, certificate provider, and expiry details from HTTP request headers.
  * Calls the RI API with this information.
  */
+func extractWebPAHeaderData(req *http.Request) (WebPAHeaderData, error) {
+	webPAConveyHeader := req.Header.Get("X-WebPA-Convey")
+	decodedData, err := base64Decode(webPAConveyHeader)
+	if err != nil {
+		return WebPAHeaderData{}, err
+	}
+
+	var conveyHeaderData WebPAHeaderData
+	if err := json.Unmarshal(decodedData, &conveyHeaderData); err != nil {
+		return WebPAHeaderData{}, fmt.Errorf("failed to unmarshal decoded X-WebPA-Convey data: %v", err)
+	}
+
+	return conveyHeaderData, nil
+}
 
 func base64Decode(encodedStr string) ([]byte, error) {
 	decodedData, err := base64.StdEncoding.DecodeString(encodedStr)
@@ -236,14 +250,6 @@ func base64Decode(encodedStr string) ([]byte, error) {
 	return decodedData, nil
 }
 
-func extractWebPAConveyHeader(req *http.Request) (string, error) {
-	webPAConveyHeader := req.Header.Get("X-WebPA-Convey")
-	if webPAConveyHeader == "" {
-		return "", fmt.Errorf("X-WebPA-Convey header not found")
-	}
-	return webPAConveyHeader, nil
-}
-
 func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.Client, resourceURL *url.URL) error {
 	certificateProviderRaw := req.Header.Get(certificateProviderHeader)
 	certificateProviderType := "DTSECURITY"
@@ -251,38 +257,27 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 		certificateProviderType = "IRDETO"
 	}
 
-	webPAConveyHeader, err := extractWebPAConveyHeader(req)
+	conveyHeaderData, err := extractWebPAHeaderData(req)
 	if err != nil {
 		return err
 	}
 
-	decodedData, err := base64Decode(webPAConveyHeader)
-	if err != nil {
-		return err
-	}
-
-	var webPAData WebPAHeaderData
-	if err := json.Unmarshal(decodedData, &webPAData); err != nil {
-		return fmt.Errorf("failed to unmarshal decoded X-WebPA-Convey data: %v", err)
-	}
-	bootTime := time.Unix(webPAData.BootTime, 0)
-
-	requestBody := UpdateResourceRequest{
-		IpAddress:                req.Header.Get("X-Real-IP"),
-		CertificateProviderType:  certificateProviderType,
-		CertificateExpiryDate:    req.Header.Get(expiryDateHeader),
-		HwLastRebootReason:       webPAData.HwLastRebootReason,
-		WebpaInterfaceUsed:       webPAData.WebpaInterfaceUsed,
-		WebpaLastReconnectReason: webPAData.WebpaLastReconnectReason,
-		WebpaProtocol:            webPAData.WebpaProtocol,
-		LastBootTime:             bootTime,
-		FirmwareVersion:          webPAData.FwName,
+	requestBody := UpdateResourceRequestForRI{
+		IpAddress:               req.Header.Get("X-Real-IP"),
+		CertificateProviderType: certificateProviderType,
+		CertificateExpiryDate:   req.Header.Get(expiryDateHeader),
+		LastRebootReason:        conveyHeaderData.HwLastRebootReason,
+		WanInterfaceUsed:        conveyHeaderData.WebpaInterfaceUsed,
+		LastReconnectReason:     conveyHeaderData.WebpaLastReconnectReason,
+		ManagementProtocol:      conveyHeaderData.WebpaProtocol,
+		LastBootTime:            time.Unix(conveyHeaderData.BootTime, 0),
+		FirmwareVersion:         conveyHeaderData.FwName,
 	}
 
 	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Last Boot Time: [%s], Firmware Version: [%s]",
 		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
-		requestBody.HwLastRebootReason, requestBody.WebpaInterfaceUsed,
-		requestBody.WebpaLastReconnectReason, requestBody.WebpaProtocol,
+		requestBody.LastRebootReason, requestBody.WanInterfaceUsed,
+		requestBody.LastReconnectReason, requestBody.ManagementProtocol,
 		requestBody.LastBootTime, requestBody.FirmwareVersion)
 
 	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))

@@ -135,6 +135,7 @@ func TestForwarder(t *testing.T) {
 }
 func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 	testsData := []struct {
+		description           string // Add a description field
 		realIP                string
 		certificateProvider   string
 		certificateExpiryDate string
@@ -144,6 +145,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 		expectedStatus        int
 	}{
 		{
+			description:           "Valid input with all fields populated",
 			realIP:                "127.0.0.1",
 			certificateProvider:   "DTSECURITY",
 			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
@@ -153,6 +155,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			expectedStatus:        http.StatusOK,
 		},
 		{
+			description:           "Input with empty IP address",
 			realIP:                "",
 			certificateProvider:   "C2 CertProvider",
 			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
@@ -162,6 +165,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			expectedStatus:        http.StatusOK,
 		},
 		{
+			description:           "Input with specific certificate provider",
 			realIP:                "127.0.0.1",
 			certificateProvider:   "CertProvider",
 			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
@@ -171,6 +175,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			expectedStatus:        http.StatusOK,
 		},
 		{
+			description:           "Input with empty certificate expiry date",
 			realIP:                "127.0.0.1",
 			certificateProvider:   "DTSECURITY",
 			certificateExpiryDate: "",
@@ -180,12 +185,33 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			expectedStatus:        http.StatusOK,
 		},
 		{
+			description:           "Internal server error due to invalid request",
 			realIP:                "127.0.0.1",
 			certificateProvider:   "DTSECURITY",
 			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "eyJjb250ZXh0IjoiY2VydGlmaWNhdGVFeHBpcnlEYXRlIjoiU2VwIDE5IDIzOjU5OjU5IDIwMzE4IEdNVCIsImNlcnRpZmljYXRlUHJvdmlkZXIiOiJEVFNFQ1VSSVRZIiwiaHctbWFudWZhY3R1cmVyIjoiUEFSQU1PVVQtMi4wLTYxYjFhN2EiLCJmb3JtYXR0aW9uIjoiMDA1LjAzMy4wMDEiLCJib290LXRpbWUiOjE3MjUwMDA2MDgsIndlYnBhLXByb3RvY29sIjoiUEFSQU1PVVQtMi4wLTYxYjFhN2EiLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIn0=",
 			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT"}`,
+			expectedStatus:        http.StatusInternalServerError,
+		},
+		{
+			description:           "Invalid X-WebPA-Convey header",
+			realIP:                "127.0.0.1",
+			certificateProvider:   "DTSECURITY",
+			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
+			deviceCN:              "TestCPE",
+			webpaConveyHeader:     "abcd1234",
+			expectedRequestBody:   "",
+			expectedStatus:        http.StatusInternalServerError,
+		},
+		{
+			description:           "Missing X-WebPA-Convey header",
+			realIP:                "127.0.0.1",
+			certificateProvider:   "DTSECURITY",
+			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
+			deviceCN:              "TestCPE",
+			webpaConveyHeader:     "",
+			expectedRequestBody:   "",
 			expectedStatus:        http.StatusInternalServerError,
 		},
 	}
@@ -197,7 +223,10 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				t.Logf("Received headers: %+v", r.Header)
 				assert.Equal(http.MethodPut, r.Method)
-
+				if tt.expectedStatus == http.StatusInternalServerError {
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
 				requestBody, err := io.ReadAll(r.Body)
 				assert.NoError(err)
 				assert.JSONEq(tt.expectedRequestBody, string(requestBody))
@@ -229,6 +258,9 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			err = updateResourceIpAddressAndCertificateInfo(testReq, client, resourceURL)
 
 			if tt.expectedStatus != http.StatusOK {
+				if err != nil {
+					t.Logf("Error occurred: %v", err)
+				}
 				assert.Error(err)
 			} else {
 				assert.NoError(err)
