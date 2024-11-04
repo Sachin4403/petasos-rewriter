@@ -152,6 +152,42 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","lastBootTime":"2024-08-30T12:20:08+05:30","firmwareVersion":"005.033.001"}`,
 			expectedStatus:        http.StatusOK,
 		},
+		{
+			realIP:                "",
+			certificateProvider:   "C2 CertProvider",
+			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
+			deviceCN:              "TestCPE",
+			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiQ2hhcmFjdGVyMS5NRSIsImh3LW1hbnVmYWN0dXJlciI6IlwiU3RhcHRvbXNcIiIsImJvb3QtdGltZSI6MTY2NzkwMDAwMCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTEuMC0xYjJhZDU3MCIsIndlYnBhLWFuZGVyeWRlLXNlY3RvciI6InRlc3RfcHJvdG90YWN0dXJlIiwiZ3VhZ2UtdHlwZSI6InVua25vd24ifQ==",
+			expectedRequestBody:   `{"ipAddress":"","certificateProviderType":"IRDETO","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"PARODUS-1.0-1b2ad570","lastBootTime":"2022-11-08T15:03:20+05:30","firmwareVersion":""}`,
+			expectedStatus:        http.StatusOK,
+		},
+		{
+			realIP:                "127.0.0.1",
+			certificateProvider:   "CertProvider",
+			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
+			deviceCN:              "TestCPE",
+			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiQ2hhcmFjdGVyMS5MRSIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTY2NzkwMDAwMCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTEuMC0xYjJhZDU3MCIsIndlYnBhLWFuZGVyeWRlLXNlY3RvciI6InRlc3RfcHJvdG90YWN0dXVyZSIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24ifQ==",
+			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"PARODUS-1.0-1b2ad570","lastBootTime":"2022-11-08T15:03:20+05:30","firmwareVersion":"005.033.001"}`,
+			expectedStatus:        http.StatusOK,
+		},
+		{
+			realIP:                "127.0.0.1",
+			certificateProvider:   "DTSECURITY",
+			certificateExpiryDate: "",
+			deviceCN:              "TestCPE",
+			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24ifQ==",
+			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"","managementProtocol":"PARODUS-2.0-61b1a7a","lastBootTime":"2024-08-30T12:20:08+05:30","firmwareVersion":"005.033.001"}`,
+			expectedStatus:        http.StatusOK,
+		},
+		{
+			realIP:                "127.0.0.1",
+			certificateProvider:   "DTSECURITY",
+			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
+			deviceCN:              "TestCPE",
+			webpaConveyHeader:     "eyJjb250ZXh0IjoiY2VydGlmaWNhdGVFeHBpcnlEYXRlIjoiU2VwIDE5IDIzOjU5OjU5IDIwMzE4IEdNVCIsImNlcnRpZmljYXRlUHJvdmlkZXIiOiJEVFNFQ1VSSVRZIiwiaHctbWFudWZhY3R1cmVyIjoiUEFSQU1PVVQtMi4wLTYxYjFhN2EiLCJmb3JtYXR0aW9uIjoiMDA1LjAzMy4wMDEiLCJib290LXRpbWUiOjE3MjUwMDA2MDgsIndlYnBhLXByb3RvY29sIjoiUEFSQU1PVVQtMi4wLTYxYjFhN2EiLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIn0=",
+			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT"}`,
+			expectedStatus:        http.StatusInternalServerError,
+		},
 	}
 
 	for i, tt := range testsData {
@@ -176,6 +212,8 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			testReq.Header.Set(expiryDateHeader, tt.certificateExpiryDate)
 			testReq.Header.Set(deviceCNHeader, tt.deviceCN)
 			testReq.Header.Set(webpaConveyHeader, tt.webpaConveyHeader)
+			testReq.Header.Set("ENVIRONMENT", "test")
+			testReq.Header.Set("X-TENANT-ID", "12345")
 
 			client := &http.Client{
 				Transport: &http.Transport{
@@ -195,7 +233,6 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			} else {
 				assert.NoError(err)
 			}
-			assert.Equal(tt.expectedStatus, http.StatusOK, "Expected status OK")
 		})
 	}
 }
