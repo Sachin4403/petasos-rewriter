@@ -262,7 +262,7 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 		return err
 	}
 
-	requestBody := UpdateResourceRequestForRI{
+	requestBody := UpdateResourceRequest{
 		IpAddress:               req.Header.Get("X-Real-IP"),
 		CertificateProviderType: certificateProviderType,
 		CertificateExpiryDate:   req.Header.Get(expiryDateHeader),
