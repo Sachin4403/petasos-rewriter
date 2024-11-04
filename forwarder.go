@@ -290,7 +290,7 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 	if err != nil {
 		return err
 	}
-
+	//resourceURL = abc.com/v1/resource/macAddress
 	finalUrl := resourceURL.String() + "/" + cpeIdentifier
 
 	request, err := http.NewRequest(http.MethodPut, finalUrl, bytes.NewReader(jsonBytes))
