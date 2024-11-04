@@ -276,7 +276,7 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 	requestBody := UpdateResourceRequest{
 		IpAddress:                req.Header.Get("X-Real-IP"),
 		CertificateProviderType:  certificateProviderType,
-		CertificateExpiryDate:    req.Header.Get("X-Certificate-Expiry"),
+		CertificateExpiryDate:    req.Header.Get(expiryDateHeader),
 		HwLastRebootReason:       webPAData.HwLastRebootReason,
 		WebpaInterfaceUsed:       webPAData.WebpaInterfaceUsed,
 		WebpaLastReconnectReason: webPAData.WebpaLastReconnectReason,
