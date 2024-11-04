@@ -5,18 +5,17 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/getsentry/sentry-go"
+	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strings"
-
-	"github.com/getsentry/sentry-go"
-	"github.com/spf13/viper"
-
-	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
+	"time"
 )
 
 const (
@@ -271,7 +270,7 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 	if err := json.Unmarshal(decodedData, &webPAData); err != nil {
 		return fmt.Errorf("failed to unmarshal decoded X-WebPA-Convey data: %v", err)
 	}
-
+	bootTime := time.Unix(webPAData.BootTime, 0)
 	// Prepare the request body
 	requestBody := UpdateResourceRequest{
 		IpAddress:                req.Header.Get("X-Real-IP"),
@@ -281,6 +280,8 @@ func updateResourceIpAddressAndCertificateInfo(req *http.Request, client *http.C
 		WebpaInterfaceUsed:       webPAData.WebpaInterfaceUsed,
 		WebpaLastReconnectReason: webPAData.WebpaLastReconnectReason,
 		WebpaProtocol:            webPAData.WebpaProtocol,
+		LastBootTime:             bootTime,
+		FirmwareVersion:          webPAData.FwName,
 	}
 
 	// Log the details
