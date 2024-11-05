@@ -254,9 +254,6 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			err = updateResourceDetails(testReq, client, resourceURL)
 
 			if tt.expectedStatus != http.StatusOK {
-				if err != nil {
-					t.Logf("Error occurred: %v", err)
-				}
 				assert.Error(err)
 			} else {
 				assert.NoError(err)
