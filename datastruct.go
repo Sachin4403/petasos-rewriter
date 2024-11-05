@@ -1,20 +1,18 @@
 package main
 
-import "time"
-
 type UpdateResourceRequest struct {
-	IpAddress               string    `json:"ipAddress"`
-	CertificateProviderType string    `json:"certificateProviderType"`
-	CertificateExpiryDate   string    `json:"certificateExpiryDate"`
-	LastRebootReason        string    `json:"lastRebootReason"`
-	WanInterfaceUsed        string    `json:"wanInterfaceUsed"`
-	LastReconnectReason     string    `json:"lastReconnectReason"`
-	ManagementProtocol      string    `json:"managementProtocol"`
-	LastBootTime            time.Time `json:"lastBootTime"`
-	FirmwareVersion         string    `json:"firmwareVersion"`
+	IpAddress               string `json:"ipAddress"`
+	CertificateProviderType string `json:"certificateProviderType"`
+	CertificateExpiryDate   string `json:"certificateExpiryDate"`
+	LastRebootReason        string `json:"lastRebootReason"`
+	WanInterfaceUsed        string `json:"wanInterfaceUsed"`
+	LastReconnectReason     string `json:"lastReconnectReason"`
+	ManagementProtocol      string `json:"managementProtocol"`
+	LastBootTime            int64  `json:"lastBootTime"`
+	FirmwareVersion         string `json:"firmwareVersion"`
 }
 
-type WebPAHeaderData struct {
+type WebPAConveyHeaderData struct {
 	WebpaProtocol            string `json:"webpa-protocol"`
 	WebpaInterfaceUsed       string `json:"webpa-interface-used"`
 	HwLastRebootReason       string `json:"hw-last-reboot-reason"`

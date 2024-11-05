@@ -135,7 +135,7 @@ func TestForwarder(t *testing.T) {
 }
 func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 	testsData := []struct {
-		description           string // Add a description field
+		description           string
 		realIP                string
 		certificateProvider   string
 		certificateExpiryDate string
@@ -151,7 +151,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24iLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIn0=",
-			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","lastBootTime":"2024-08-30T12:20:08+05:30","firmwareVersion":"005.033.001"}`,
+			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","lastBootTime":1.725000608e+09,"firmwareVersion":"005.033.001"}`,
 			expectedStatus:        http.StatusOK,
 		},
 		{
@@ -161,7 +161,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiQ2hhcmFjdGVyMS5NRSIsImh3LW1hbnVmYWN0dXJlciI6IlwiU3RhcHRvbXNcIiIsImJvb3QtdGltZSI6MTY2NzkwMDAwMCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTEuMC0xYjJhZDU3MCIsIndlYnBhLWFuZGVyeWRlLXNlY3RvciI6InRlc3RfcHJvdG90YWN0dXJlIiwiZ3VhZ2UtdHlwZSI6InVua25vd24ifQ==",
-			expectedRequestBody:   `{"ipAddress":"","certificateProviderType":"IRDETO","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"PARODUS-1.0-1b2ad570","lastBootTime":"2022-11-08T15:03:20+05:30","firmwareVersion":""}`,
+			expectedRequestBody:   `{"ipAddress":"","certificateProviderType":"IRDETO","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"PARODUS-1.0-1b2ad570","lastBootTime":1.6679e+09,"firmwareVersion":""}`,
 			expectedStatus:        http.StatusOK,
 		},
 		{
@@ -171,7 +171,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiQ2hhcmFjdGVyMS5MRSIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTY2NzkwMDAwMCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTEuMC0xYjJhZDU3MCIsIndlYnBhLWFuZGVyeWRlLXNlY3RvciI6InRlc3RfcHJvdG90YWN0dXVyZSIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24ifQ==",
-			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"PARODUS-1.0-1b2ad570","lastBootTime":"2022-11-08T15:03:20+05:30","firmwareVersion":"005.033.001"}`,
+			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"PARODUS-1.0-1b2ad570","lastBootTime":1.6679e+09,"firmwareVersion":"005.033.001"}`,
 			expectedStatus:        http.StatusOK,
 		},
 		{
@@ -181,18 +181,18 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			certificateExpiryDate: "",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24ifQ==",
-			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"","managementProtocol":"PARODUS-2.0-61b1a7a","lastBootTime":"2024-08-30T12:20:08+05:30","firmwareVersion":"005.033.001"}`,
+			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"","managementProtocol":"PARODUS-2.0-61b1a7a","lastBootTime":1.725000608e+09,"firmwareVersion":"005.033.001"}`,
 			expectedStatus:        http.StatusOK,
 		},
 		{
-			description:           "Internal server error due to invalid request",
+			description:           "Bad request error due to invalid request",
 			realIP:                "127.0.0.1",
 			certificateProvider:   "DTSECURITY",
 			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "eyJjb250ZXh0IjoiY2VydGlmaWNhdGVFeHBpcnlEYXRlIjoiU2VwIDE5IDIzOjU5OjU5IDIwMzE4IEdNVCIsImNlcnRpZmljYXRlUHJvdmlkZXIiOiJEVFNFQ1VSSVRZIiwiaHctbWFudWZhY3R1cmVyIjoiUEFSQU1PVVQtMi4wLTYxYjFhN2EiLCJmb3JtYXR0aW9uIjoiMDA1LjAzMy4wMDEiLCJib290LXRpbWUiOjE3MjUwMDA2MDgsIndlYnBhLXByb3RvY29sIjoiUEFSQU1PVVQtMi4wLTYxYjFhN2EiLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIn0=",
 			expectedRequestBody:   `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT"}`,
-			expectedStatus:        http.StatusInternalServerError,
+			expectedStatus:        http.StatusBadRequest,
 		},
 		{
 			description:           "Invalid X-WebPA-Convey header",
@@ -202,17 +202,17 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "abcd1234",
 			expectedRequestBody:   "",
-			expectedStatus:        http.StatusInternalServerError,
+			expectedStatus:        http.StatusBadRequest,
 		},
 		{
-			description:           "Missing X-WebPA-Convey header",
-			realIP:                "127.0.0.1",
+			description:           "No X-WebPA-Convey header present",
+			realIP:                "192.168.1.1",
 			certificateProvider:   "DTSECURITY",
-			certificateExpiryDate: "Sep 19 23:59:59 2031 GMT",
+			certificateExpiryDate: "Dec 31 23:59:59 2025 GMT",
 			deviceCN:              "TestCPE",
 			webpaConveyHeader:     "",
-			expectedRequestBody:   "",
-			expectedStatus:        http.StatusInternalServerError,
+			expectedRequestBody:   `{"ipAddress":"192.168.1.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Dec 31 23:59:59 2025 GMT","lastRebootReason":"","wanInterfaceUsed":"","lastReconnectReason":"","managementProtocol":"","lastBootTime":0,"firmwareVersion":""}`,
+			expectedStatus:        http.StatusOK,
 		},
 	}
 
@@ -223,10 +223,6 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				t.Logf("Received headers: %+v", r.Header)
 				assert.Equal(http.MethodPut, r.Method)
-				if tt.expectedStatus == http.StatusInternalServerError {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
 				requestBody, err := io.ReadAll(r.Body)
 				assert.NoError(err)
 				assert.JSONEq(tt.expectedRequestBody, string(requestBody))
@@ -255,7 +251,7 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			resourceURL, err := url.Parse(mockServer.URL + "/v1/resource/macAddress")
 			assert.NoError(err)
 
-			err = updateResourceIpAddressAndCertificateInfo(testReq, client, resourceURL)
+			err = updateResourceDetails(testReq, client, resourceURL)
 
 			if tt.expectedStatus != http.StatusOK {
 				if err != nil {
