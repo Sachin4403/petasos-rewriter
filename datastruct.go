@@ -4,12 +4,12 @@ type UpdateResourceRequest struct {
 	IpAddress               string `json:"ipAddress"`
 	CertificateProviderType string `json:"certificateProviderType"`
 	CertificateExpiryDate   string `json:"certificateExpiryDate"`
-	LastRebootReason        string `json:"lastRebootReason"`
-	WanInterfaceUsed        string `json:"wanInterfaceUsed"`
-	LastReconnectReason     string `json:"lastReconnectReason"`
-	ManagementProtocol      string `json:"managementProtocol"`
-	LastBootTime            int64  `json:"lastBootTime"`
-	FirmwareVersion         string `json:"firmwareVersion"`
+	LastRebootReason        string `json:"lastRebootReason,omitempty"`
+	WanInterfaceUsed        string `json:"wanInterfaceUsed,omitempty"`
+	LastReconnectReason     string `json:"lastReconnectReason,omitempty"`
+	ManagementProtocol      string `json:"managementProtocol,omitempty"`
+	LastBootTime            int64  `json:"lastBootTime,omitempty"`
+	FirmwareVersion         string `json:"firmwareVersion,omitempty"`
 }
 
 type WebPAConveyHeaderData struct {
