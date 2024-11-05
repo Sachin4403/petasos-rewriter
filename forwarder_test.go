@@ -221,7 +221,6 @@ func TestUpdateResourceIpAddressAndCertificateInfo(t *testing.T) {
 			assert := assert.New(t)
 
 			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				t.Logf("Received headers: %+v", r.Header)
 				assert.Equal(http.MethodPut, r.Method)
 				requestBody, err := io.ReadAll(r.Body)
 				assert.NoError(err)
