@@ -15,7 +15,6 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
-	"time"
 )
 
 const (
@@ -251,7 +250,6 @@ func populateWebPaConveyHeaderDataIfPresent(webPAConveyHeader string, updatedRes
 		updatedResourceRequestBody.WanInterfaceUsed = conveyHeaderData.WebpaInterfaceUsed
 		updatedResourceRequestBody.LastReconnectReason = conveyHeaderData.WebpaLastReconnectReason
 		updatedResourceRequestBody.ManagementProtocol = conveyHeaderData.WebpaProtocol
-		updatedResourceRequestBody.LastBootTime = time.Unix(conveyHeaderData.BootTime, 0).Local().Format(time.RFC3339Nano)
 		updatedResourceRequestBody.FirmwareVersion = conveyHeaderData.FwName
 	}
 	return nil
@@ -276,11 +274,10 @@ func updateResourceDetails(req *http.Request, client *http.Client, resourceURL *
 		return err
 	}
 
-	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Last Boot Time: [%s], Firmware Version: [%s]",
+	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s]",
 		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
 		requestBody.LastRebootReason, requestBody.WanInterfaceUsed,
-		requestBody.LastReconnectReason, requestBody.ManagementProtocol,
-		requestBody.LastBootTime, requestBody.FirmwareVersion)
+		requestBody.LastReconnectReason, requestBody.ManagementProtocol, requestBody.FirmwareVersion)
 
 	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))
 	jsonBytes, err := json.Marshal(requestBody)
