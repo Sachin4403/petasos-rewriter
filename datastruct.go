@@ -8,7 +8,6 @@ type UpdateResourceRequest struct {
 	WanInterfaceUsed        string `json:"wanInterfaceUsed,omitempty"`
 	LastReconnectReason     string `json:"lastReconnectReason,omitempty"`
 	ManagementProtocol      string `json:"managementProtocol,omitempty"`
-	LastBootTime            string `json:"lastBootTime,omitempty"`
 	FirmwareVersion         string `json:"firmwareVersion,omitempty"`
 }
 
