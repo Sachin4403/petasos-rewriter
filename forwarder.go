@@ -5,16 +5,17 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/getsentry/sentry-go"
-	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -251,7 +252,7 @@ func populateWebPaConveyHeaderDataIfPresent(webPAConveyHeader string, updatedRes
 		updatedResourceRequestBody.LastReconnectReason = conveyHeaderData.WebpaLastReconnectReason
 		updatedResourceRequestBody.ManagementProtocol = conveyHeaderData.WebpaProtocol
 		updatedResourceRequestBody.FirmwareVersion = conveyHeaderData.FwName
-		updatedResourceRequestBody.ipv4AddressHGWWAN = conveyHeaderData.ipv4AddressHGWWAN
+		updatedResourceRequestBody.Ipv4AddressHGWWAN = conveyHeaderData.Ipv4AddressHGWWAN
 	}
 	return nil
 }
@@ -275,10 +276,10 @@ func updateResourceDetails(req *http.Request, client *http.Client, resourceURL *
 		return err
 	}
 
-	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s], ipv4AddressHGWWAN value: [%s]",
+	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s], Ipv4AddressHGWWAN value: [%s]",
 		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
 		requestBody.LastRebootReason, requestBody.WanInterfaceUsed,
-		requestBody.LastReconnectReason, requestBody.ManagementProtocol, requestBody.FirmwareVersion, requestBody.ipv4AddressHGWWAN)
+		requestBody.LastReconnectReason, requestBody.ManagementProtocol, requestBody.FirmwareVersion, requestBody.Ipv4AddressHGWWAN)
 
 	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))
 	jsonBytes, err := json.Marshal(requestBody)
