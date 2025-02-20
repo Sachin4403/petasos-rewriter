@@ -150,8 +150,8 @@ func TestUpdateResourceDetails(t *testing.T) {
 			certificateProvider:               "DTSECURITY",
 			certificateExpiryDate:             "Sep 19 23:59:59 2031 GMT",
 			deviceCN:                          "TestCPE",
-			webpaConveyHeader:                 "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24iLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIiwid2FuLWlwdjQtYWRkcmVzcyI6IjEyNy4wLjAuMSIsImFsZyI6IkhTMjU2In0.e30.f_2LbSD1FOrSG2domy5au4C0b5TAK9O7RBnQvjpDgY0",
-			expectedUpdateResourceRequestBody: `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","firmwareVersion":"005.033.001","ipv4AddressHGWWAN": "127.0.0.1"}`,
+			webpaConveyHeader:                 "eyJody1tb2RlbCI6ICJGR0EyMjMzIiwgImh3LXNlcmlhbC1udW1iZXIiOiAiMjIzM0FEQ01MIiwgImh3LW1hbnVmYWN0dXJlciI6ICJUZWNobmljb2xvciIsICJmdy1uYW1lIjogIjAwNS4wMzMuMDAxIiwgImJvb3QtdGltZSI6IDE3MjUwMDA2MDgsICJ3ZWJwYS1wcm90b2NvbCI6ICJQQVJPRFVTLTIuMC02MWIxYTdhIiwgIndlYnBhLWludGVyZmFjZS11c2VkIjogImVyb3V0ZXIwIiwgImh3LWxhc3QtcmVib290LXJlYXNvbiI6ICJ1bmtub3duIiwgIndlYnBhLWxhc3QtcmVjb25uZWN0LXJlYXNvbiI6ICJTU0xfU29ja2V0X0Nsb3NlIiwgImlwdjRBZGRyZXNzSEdXV0FOIjogIjEyNy4wLjAuMiJ9",
+			expectedUpdateResourceRequestBody: `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","firmwareVersion":"005.033.001","ipv4AddressHGWWAN":"127.0.0.2"}`,
 			expectedStatus:                    http.StatusOK,
 		},
 		{
