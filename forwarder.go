@@ -275,10 +275,10 @@ func updateResourceDetails(req *http.Request, client *http.Client, resourceURL *
 		return err
 	}
 
-	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s], Ipv4AddressHGWWAN value: [%s]",
+	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s]",
 		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
 		requestBody.LastRebootReason, requestBody.WanInterfaceUsed,
-		requestBody.LastReconnectReason, requestBody.ManagementProtocol, requestBody.FirmwareVersion, requestBody.Ipv4AddressHGWWAN)
+		requestBody.LastReconnectReason, requestBody.ManagementProtocol, requestBody.FirmwareVersion)
 
 	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))
 	jsonBytes, err := json.Marshal(requestBody)
