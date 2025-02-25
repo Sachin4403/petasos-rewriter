@@ -5,17 +5,16 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/getsentry/sentry-go"
+	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strings"
-
-	"github.com/getsentry/sentry-go"
-	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 )
 
 const (
