@@ -251,6 +251,7 @@ func populateWebPaConveyHeaderDataIfPresent(webPAConveyHeader string, updatedRes
 		updatedResourceRequestBody.LastReconnectReason = conveyHeaderData.WebpaLastReconnectReason
 		updatedResourceRequestBody.ManagementProtocol = conveyHeaderData.WebpaProtocol
 		updatedResourceRequestBody.FirmwareVersion = conveyHeaderData.FwName
+		updatedResourceRequestBody.Ipv4AddressHGWWAN = conveyHeaderData.Ipv4AddressHGWWAN
 	}
 	return nil
 }

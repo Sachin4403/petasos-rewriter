@@ -9,6 +9,7 @@ type UpdateResourceRequest struct {
 	LastReconnectReason     string `json:"lastReconnectReason,omitempty"`
 	ManagementProtocol      string `json:"managementProtocol,omitempty"`
 	FirmwareVersion         string `json:"firmwareVersion,omitempty"`
+	Ipv4AddressHGWWAN       string `json:"ipv4AddressHGWWAN,omitempty"`
 }
 
 type WebPAConveyHeaderData struct {
@@ -18,4 +19,5 @@ type WebPAConveyHeaderData struct {
 	WebpaLastReconnectReason string `json:"webpa-last-reconnect-reason"`
 	BootTime                 int64  `json:"boot-time"`
 	FwName                   string `json:"fw-name"`
+	Ipv4AddressHGWWAN        string `json:"wan-ipv4-address"`
 }
