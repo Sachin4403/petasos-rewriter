@@ -38,6 +38,7 @@ func TestReplaceTalariaInternalName(t *testing.T) {
 			expected: "talaria4",
 		},
 		{"xmidt-talaria4", "xmidt-talaria-", "talaria", "talaria4", ErrNoMatchFound},
+		{"xmidt-talaria-2.xmidt-talaria-headless.hgw-shared-uat.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria2", nil},
 	}
 
 	for i, record := range testData {

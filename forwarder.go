@@ -205,6 +205,8 @@ func forwarder(c echo.Context, client *http.Client) error {
 // replaceTalariaInternalName replaces internal talaria name.
 // Returns a ErrNoMatchFound when replacement is impossible.
 func replaceTalariaInternalName(host, old, new string) (string, error) {
+	// xmidt-talaria-0.xmidt-talaria-headless.hgw-shared-uat.svc.cluster.local
+	host = strings.Replace(host, ".xmidt-talaria-headless.hgw-shared-uat.svc.cluster.local", "", -1)
 	index := strings.Index(host, old)
 	if index == -1 {
 		return "", ErrNoMatchFound
