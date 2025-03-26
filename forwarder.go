@@ -171,7 +171,7 @@ func forwarder(c echo.Context, client *http.Client) error {
 	// Do replacement & build public talaria url
 	externalTalariaName, err := replaceTalariaInternalName(
 		locationUrl.Hostname(),
-		viper.GetString(talariaInternal),
+		talariaInternalRegex,
 		viper.GetString(talariaExternal),
 	)
 	if err != nil {
@@ -204,15 +204,12 @@ func forwarder(c echo.Context, client *http.Client) error {
 
 // replaceTalariaInternalName replaces internal talaria name.
 // Returns a ErrNoMatchFound when replacement is impossible.
-func replaceTalariaInternalName(host, old, new string) (string, error) {
-	// xmidt-talaria-0.xmidt-talaria-headless.hgw-shared-uat.svc.cluster.local
-	host = strings.Replace(host, ".xmidt-talaria-headless.hgw-shared-uat.svc.cluster.local", "", -1)
-	index := strings.Index(host, old)
-	if index == -1 {
-		return "", ErrNoMatchFound
-	}
-	talariaExternal := strings.Replace(host, old, new, -1)
-	return talariaExternal, nil
+func replaceTalariaInternalName(host string, talariaInternalRegex *regexp.Regexp, new string) (string, error) {
+	talariaHost := talariaInternalRegex.ReplaceAllString(host, "$1")
+	var builder strings.Builder
+	builder.WriteString(new)
+	builder.WriteString(talariaHost)
+	return builder.String(), nil
 }
 
 // buildExternalURL by concatenation new talaria name + given domain

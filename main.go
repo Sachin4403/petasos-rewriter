@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -54,6 +55,7 @@ var (
 	resourceURL                *url.URL
 	isAuthHeaderCheckEnabled   = false
 	authHeaderCheckRequestPath = ""
+	talariaInternalRegex       *regexp.Regexp
 )
 
 var rootCmd = &cobra.Command{
@@ -74,7 +76,6 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		fixedScheme := viper.GetString("server.fixedScheme")
-
 		if !(fixedScheme == "" || fixedScheme == "http" || fixedScheme == "https") {
 			log.Error().Msg(fmt.Errorf("Invalid Scheme [%s]", fixedScheme).Error())
 			os.Exit(1)
@@ -128,6 +129,7 @@ var rootCmd = &cobra.Command{
 				remoteUpdateAddressEnabled = false
 			}
 		}
+		talariaInternalRegex = regexp.MustCompile(viper.GetString(talariaInternal))
 
 		client := configureClient(prop, tp)
 		// Setup & Start Server
