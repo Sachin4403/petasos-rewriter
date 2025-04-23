@@ -5,16 +5,17 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/getsentry/sentry-go"
-	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -247,7 +248,7 @@ func populateWebPaConveyHeaderDataIfPresent(webPAConveyHeader string, updatedRes
 		}
 
 		updatedResourceRequestBody.LastRebootReason = conveyHeaderData.HwLastRebootReason
-		updatedResourceRequestBody.WanInterfaceUsed = conveyHeaderData.WebpaInterfaceUsed
+		updatedResourceRequestBody.WanInterfaceLabel = conveyHeaderData.WebpaInterfaceLabel
 		updatedResourceRequestBody.LastReconnectReason = conveyHeaderData.WebpaLastReconnectReason
 		updatedResourceRequestBody.ManagementProtocol = conveyHeaderData.WebpaProtocol
 		updatedResourceRequestBody.FirmwareVersion = conveyHeaderData.FwName
@@ -275,9 +276,9 @@ func updateResourceDetails(req *http.Request, client *http.Client, resourceURL *
 		return err
 	}
 
-	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Used: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s]",
+	log.Ctx(req.Context()).Info().Msgf("Certificate Provider type: [%s], Certificate expiry date: [%s], HW Last Reboot Reason: [%s], Webpa Interface Label: [%s], Webpa Last Reconnect Reason: [%s], Webpa Protocol: [%s], Firmware Version: [%s]",
 		requestBody.CertificateProviderType, requestBody.CertificateExpiryDate,
-		requestBody.LastRebootReason, requestBody.WanInterfaceUsed,
+		requestBody.LastRebootReason, requestBody.WanInterfaceLabel,
 		requestBody.LastReconnectReason, requestBody.ManagementProtocol, requestBody.FirmwareVersion)
 
 	cpeIdentifier := strings.ToLower(req.Header.Get(deviceCNHeader))
