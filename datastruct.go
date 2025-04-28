@@ -14,7 +14,7 @@ type UpdateResourceRequest struct {
 
 type WebPAConveyHeaderData struct {
 	WebpaProtocol            string `json:"webpa-protocol"`
-	WebpaInterfaceUsed       string `json:"webpa-interface-used"`
+	WebpaInterfaceLabel      string `json:"webpa-interface-label"`
 	HwLastRebootReason       string `json:"hw-last-reboot-reason"`
 	WebpaLastReconnectReason string `json:"webpa-last-reconnect-reason"`
 	BootTime                 int64  `json:"boot-time"`
