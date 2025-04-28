@@ -265,9 +265,10 @@ func updateResourceDetails(req *http.Request, client *http.Client, resourceURL *
 	}
 
 	requestBody := UpdateResourceRequest{
-		IpAddress:               req.Header.Get(realIpHeader),
-		CertificateProviderType: certificateProviderType,
-		CertificateExpiryDate:   req.Header.Get(expiryDateHeader),
+		IpAddress:                req.Header.Get(realIpHeader),
+		CertificateProviderType:  certificateProviderType,
+		CertificateExpiryDate:    req.Header.Get(expiryDateHeader),
+		IsPetasosRewriterRequest: true,
 	}
 
 	webPAConveyHeader := req.Header.Get(webpaConveyHeader)
