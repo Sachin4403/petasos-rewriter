@@ -150,8 +150,8 @@ func TestUpdateResourceDetails(t *testing.T) {
 			certificateProvider:               "DTSECURITY",
 			certificateExpiryDate:             "Sep 19 23:59:59 2031 GMT",
 			deviceCN:                          "TestCPE",
-			webpaConveyHeader:                 "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLWxhYmVsIjoiZXJvdXRlcjAiLCJody1sYXN0LXJlYm9vdC1yZWFzb24iOiJ1bmtub3duIiwid2VicGEtbGFzdC1yZWNvbm5lY3QtcmVhc29uIjoiU1NMX1NvY2tldF9DbG9zZSIsIndhbi1pcHY0LWFkZHJlc3MiOiIxMjcuMC4wLjIifQ==",
-			expectedUpdateResourceRequestBody: `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceLabel":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","firmwareVersion":"005.033.001","ipv4AddressHGWWAN":"127.0.0.2"}`,
+			webpaConveyHeader:                 "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24iLCJ3ZWJwYS1sYXN0LXJlY29ubmVjdC1yZWFzb24iOiJTU0xfU29ja2V0X0Nsb3NlIiwid2FuLWlwdjQtYWRkcmVzcyI6IjEyNy4wLjAuMiJ9",
+			expectedUpdateResourceRequestBody: `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"Sep 19 23:59:59 2031 GMT","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","lastReconnectReason":"SSL_Socket_Close","managementProtocol":"PARODUS-2.0-61b1a7a","firmwareVersion":"005.033.001","ipv4AddressHGWWAN":"127.0.0.2"}`,
 			expectedStatus:                    http.StatusOK,
 		},
 		{
@@ -180,8 +180,8 @@ func TestUpdateResourceDetails(t *testing.T) {
 			certificateProvider:               "DTSECURITY",
 			certificateExpiryDate:             "",
 			deviceCN:                          "TestCPE",
-			webpaConveyHeader:                 "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLWxhYmVsIjoiZXJvdXRlcjAiLCJody1sYXN0LXJlYm9vdC1yZWFzb24iOiJ1bmtub3duIn0=",
-			expectedUpdateResourceRequestBody: `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"","lastRebootReason":"unknown","wanInterfaceLabel":"erouter0","managementProtocol":"PARODUS-2.0-61b1a7a","firmwareVersion":"005.033.001"}`,
+			webpaConveyHeader:                 "eyJody1tb2RlbCI6IlwiRkdBMjIzM1wiIiwiaHctc2VyaWFsLW51bWJlciI6IjIyMzNBRENNTCIsImh3LW1hbnVmYWN0dXJlciI6IlwiVGVjaG5pY29sb3JcIiIsImZ3LW5hbWUiOiIwMDUuMDMzLjAwMSIsImJvb3QtdGltZSI6MTcyNTAwMDYwOCwid2VicGEtcHJvdG9jb2wiOiJQQVJPRFVTLTIuMC02MWIxYTdhIiwid2VicGEtaW50ZXJmYWNlLXVzZWQiOiJlcm91dGVyMCIsImh3LWxhc3QtcmVib290LXJlYXNvbiI6InVua25vd24ifQ==",
+			expectedUpdateResourceRequestBody: `{"ipAddress":"127.0.0.1","certificateProviderType":"DTSECURITY","certificateExpiryDate":"","lastRebootReason":"unknown","wanInterfaceUsed":"erouter0","managementProtocol":"PARODUS-2.0-61b1a7a","firmwareVersion":"005.033.001"}`,
 			expectedStatus:                    http.StatusOK,
 		},
 		{
