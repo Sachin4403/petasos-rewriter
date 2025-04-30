@@ -1,15 +1,16 @@
 package main
 
 type UpdateResourceRequest struct {
-	IpAddress               string `json:"ipAddress"`
-	CertificateProviderType string `json:"certificateProviderType"`
-	CertificateExpiryDate   string `json:"certificateExpiryDate"`
-	LastRebootReason        string `json:"lastRebootReason,omitempty"`
-	WanInterfaceLabel       string `json:"wanInterfaceLabel,omitempty"`
-	LastReconnectReason     string `json:"lastReconnectReason,omitempty"`
-	ManagementProtocol      string `json:"managementProtocol,omitempty"`
-	FirmwareVersion         string `json:"firmwareVersion,omitempty"`
-	Ipv4AddressHGWWAN       string `json:"ipv4AddressHGWWAN,omitempty"`
+	IpAddress                string `json:"ipAddress"`
+	CertificateProviderType  string `json:"certificateProviderType"`
+	CertificateExpiryDate    string `json:"certificateExpiryDate"`
+	LastRebootReason         string `json:"lastRebootReason,omitempty"`
+	WanInterfaceUsed         string `json:"wanInterfaceUsed,omitempty"`
+	LastReconnectReason      string `json:"lastReconnectReason,omitempty"`
+	ManagementProtocol       string `json:"managementProtocol,omitempty"`
+	FirmwareVersion          string `json:"firmwareVersion,omitempty"`
+	Ipv4AddressHGWWAN        string `json:"ipv4AddressHGWWAN,omitempty"`
+	IsPetasosRewriterRequest bool   `json:"isPetasosRewriterRequest,omitempty"`
 }
 
 type WebPAConveyHeaderData struct {
