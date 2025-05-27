@@ -20,12 +20,14 @@ petasos:
   endpoint: http://192.168.100.128:6400
 
 talaria:
+  #should be true if you are passing regex in the internal
+  regexInInternalName: true
   # Replacement candidate with talaria.external
-  internal: talaria
+  internal: "xmidt-talaria-(\\d+)\\.xmidt-talaria-headless\\.kube-shared\\.svc\\.cluster\\.local"
   #Replacement for talaria-internal-name
-  external: talaria
+  external:
   #Talaria public domain to forward the request to. Example result: [replace(talaria-internal,talaria-external).talaria-domain]
-  domain: dev.rdk.yo-digital.com
+  domain: talaria.dev.rdk.yo-digital.com
 
 #Sentry
 sentry:
