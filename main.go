@@ -130,7 +130,7 @@ var rootCmd = &cobra.Command{
 				remoteUpdateAddressEnabled = false
 			}
 		}
-		if viper.GetBool("regexInTalariaInternal") {
+		if viper.GetBool(regexInTalariaInternal) {
 			talariaInternalRegex = regexp.MustCompile(viper.GetString(talariaInternal))
 		}
 		client := configureClient(prop, tp)
