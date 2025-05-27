@@ -20,6 +20,8 @@ petasos:
   endpoint: http://192.168.100.128:6400
 
 talaria:
+  #should be true if you are passing regex in the internal
+  regexInInternalName: true
   # Replacement candidate with talaria.external
   internal: "xmidt-talaria-(\\d+)\\.xmidt-talaria-headless\\.kube-shared\\.svc\\.cluster\\.local"
   #Replacement for talaria-internal-name

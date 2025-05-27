@@ -37,6 +37,7 @@ const (
 	traceIdHeader                = "trace-id"
 	remoteUpdateEndpoint         = "remoteUpdate.url"
 	metricsServerPort            = "metricsOptions.port"
+	regexInTalariaInternal       = "talaria.regexInInternalName"
 )
 
 func init() {
@@ -129,8 +130,9 @@ var rootCmd = &cobra.Command{
 				remoteUpdateAddressEnabled = false
 			}
 		}
-		talariaInternalRegex = regexp.MustCompile(viper.GetString(talariaInternal))
-
+		if viper.GetBool("regexInTalariaInternal") {
+			talariaInternalRegex = regexp.MustCompile(viper.GetString(talariaInternal))
+		}
 		client := configureClient(prop, tp)
 		// Setup & Start Server
 		e := echo.New()

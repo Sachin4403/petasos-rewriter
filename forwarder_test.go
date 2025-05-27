@@ -18,28 +18,33 @@ import (
 func TestReplaceTalariaInternalName(t *testing.T) {
 
 	testData := []struct {
-		host     string
-		old      string
-		new      string
-		expected string
-		err      error
+		host                   string
+		old                    string
+		new                    string
+		expected               string
+		err                    error
+		regexInTalariaInternal bool
 	}{
-		{"xmidt-talaria-1.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria1", nil},
-		{"xmidt-talaria-2.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria2", nil},
+		{"xmidt-talaria-1.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria1", nil, true},
+		{"xmidt-talaria-2.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria2", nil, true},
 		{
-			host:     "xmidt-talaria-3.xmidt-talaria-headless.kube-shared.svc.cluster.local",
-			old:      "xmidt-talaria",
-			new:      "talaria",
-			expected: "talaria3",
+			host:                   "xmidt-talaria-3.xmidt-talaria-headless.kube-shared.svc.cluster.local",
+			old:                    "xmidt-talaria",
+			new:                    "talaria",
+			expected:               "talaria3",
+			regexInTalariaInternal: true,
 		},
 		{
-			host:     "xmidt-talaria-4.xmidt-talaria-headless.kube-shared.svc.cluster.local",
-			old:      "xmidt-talaria",
-			new:      "talaria",
-			expected: "talaria4",
+			host:                   "xmidt-talaria-4.xmidt-talaria-headless.kube-shared.svc.cluster.local",
+			old:                    "xmidt-talaria",
+			new:                    "talaria",
+			expected:               "talaria4",
+			regexInTalariaInternal: true,
 		},
-		{"xmidt-talaria-4.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria4", nil},
-		{"xmidt-talaria-2.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria2", nil},
+		{"xmidt-talaria-4.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria4", nil, true},
+		{"xmidt-talaria-2.xmidt-talaria-headless.kube-shared.svc.cluster.local", "xmidt-talaria-", "talaria", "talaria2", nil, true},
+		{"xmidt-talaria9", "xmidt-talaria-", "talaria", "talaria9", ErrNoMatchFound, false},
+		{"xmidt-talaria-10", "xmidt-talaria-", "talaria", "talaria10", nil, false},
 	}
 
 	var talariaInternalRegex = regexp.MustCompile("xmidt-talaria-(\\d+)\\.xmidt-talaria-headless\\.kube-shared\\.svc\\.cluster\\.local")
@@ -47,7 +52,7 @@ func TestReplaceTalariaInternalName(t *testing.T) {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			var (
 				assert      = assert.New(t)
-				actual, err = replaceTalariaInternalName(record.host, talariaInternalRegex, record.new)
+				actual, err = replaceTalariaInternalName(record.host, talariaInternalRegex, record.old, record.new, record.regexInTalariaInternal)
 			)
 			if err != nil {
 				assert.Equal(record.err, err)
